@@ -1,9 +1,7 @@
-import os
 import subprocess
 import winreg
 
 def end_task_windows_explorer():
-    # Terminate Windows Explorer process
     try:
         subprocess.run('taskkill /f /im explorer.exe', check=True)
     except subprocess.CalledProcessError as e:
@@ -14,7 +12,6 @@ def end_task_windows_explorer():
 
 
 def start_windows_explorer():
-    # Start Windows Explorer process
     try:
         subprocess.Popen('explorer.exe')
     except subprocess.CalledProcessError as e:
@@ -24,7 +21,6 @@ def start_windows_explorer():
     return True
 
 def run_cmd_as_admin(command):
-    # Run command prompt as administrator
     try:
         subprocess.run(["powershell", "-Command", f"Start-Process cmd.exe -Verb RunAs -ArgumentList '/c {command}'"],
                        check=True)
@@ -37,10 +33,8 @@ def run_cmd_as_admin(command):
 
 def enable_no_auto_restart():
     try:
-        # Open the Windows Registry key
         key_path = r"SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
         with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path, 0, winreg.KEY_ALL_ACCESS) as key:
-            # Set the value to enable "No auto-restart with logged on users for scheduled automatic updates installations"
             winreg.SetValueEx(key, "NoAutoRebootWithLoggedOnUsers", 0, winreg.REG_DWORD, 1)
         return True
     except OSError as e:
@@ -51,14 +45,10 @@ def enable_no_auto_restart():
 # End Windows Explorer process
 if end_task_windows_explorer():
     print("Step one process successful.")
-    # Start Windows Explorer process
     if start_windows_explorer():
         print("Step two process successful.")
-        # Run cmd as admin and execute slmgr -rearm
         if run_cmd_as_admin("slmgr -rearm"):
             print("Step three process successful.")
-
-            # Enable "No auto-restart with logged on users for scheduled automatic updates installations"
             if enable_no_auto_restart():
                 print("Step four process successful.")
             else:
