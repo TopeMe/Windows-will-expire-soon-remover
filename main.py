@@ -1,6 +1,7 @@
 import subprocess
 import winreg
 
+#Restarts Windows Explorer
 def end_task_windows_explorer():
     try:
         subprocess.run('taskkill /f /im explorer.exe', check=True)
@@ -20,6 +21,7 @@ def start_windows_explorer():
 
     return True
 
+#Runs command as admin (slmgr -rearm)
 def run_cmd_as_admin(command):
     try:
         subprocess.run(["powershell", "-Command", f"Start-Process cmd.exe -Verb RunAs -ArgumentList '/c {command}'"],
@@ -31,6 +33,7 @@ def run_cmd_as_admin(command):
     return True
 
 
+#Enables no auto restart logged users
 def enable_no_auto_restart():
     try:
         key_path = r"SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
@@ -41,8 +44,7 @@ def enable_no_auto_restart():
         print(f"Error occurred while modifying the registry: {e}")
         return False
 
-
-# End Windows Explorer process
+#Runs Functions step by step
 if end_task_windows_explorer():
     print("Step one process successful.")
     if start_windows_explorer():
